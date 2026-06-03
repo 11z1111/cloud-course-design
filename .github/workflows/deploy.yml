@@ -1,0 +1,48 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  REGION: cn-east-3
+  ORG: cce-course2004
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to SWR
+        run: |
+          docker login -u ${{ secrets.REGION }}@${{ secrets.AK }} \
+            -p ${{ secrets.SK }} \
+            swr.${{ secrets.REGION }}.myhuaweicloud.com
+
+      - name: Build and Push Backend
+        run: |
+          docker build --provenance=false -t backend:${{ github.sha }} ./backend
+          docker tag backend:${{ github.sha }} \
+            swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/backend:${{ github.sha }}
+          docker push swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/backend:${{ github.sha }}
+
+      - name: Build and Push Frontend
+        run: |
+          docker build --provenance=false -t frontend:${{ github.sha }} ./frontend
+          docker tag frontend:${{ github.sha }} \
+            swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/frontend:${{ github.sha }}
+          docker push swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/frontend:${{ github.sha }}
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Update K8s
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          kubectl set image deployment/backend backend=swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/backend:${{ github.sha }} -n default
+          kubectl set image deployment/frontend frontend=swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/frontend:${{ github.sha }} -n default
+          kubectl rollout status deployment/backend -n default
+          kubectl rollout status deployment/frontend -n default
