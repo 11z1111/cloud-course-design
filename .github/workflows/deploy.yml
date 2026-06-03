@@ -25,15 +25,15 @@ jobs:
         run: |
           docker build --provenance=false -t backend:${{ github.sha }} ./backend
           docker tag backend:${{ github.sha }} \
-            swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/backend:${{ github.sha }}
-          docker push swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/backend:${{ github.sha }}
+            swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/backend:latest
+          docker push swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/backend:latest
 
       - name: Build and Push Frontend
         run: |
           docker build --provenance=false -t frontend:${{ github.sha }} ./frontend
           docker tag frontend:${{ github.sha }} \
-            swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/frontend:${{ github.sha }}
-          docker push swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/frontend:${{ github.sha }}
+            swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/frontend:latest
+          docker push swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/frontend:latest
 
       - name: Setup kubectl
         uses: azure/setup-kubectl@v4
@@ -42,7 +42,5 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
-          kubectl set image deployment/backend backend=swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/backend:${{ github.sha }} -n default
-          kubectl set image deployment/frontend frontend=swr.${{ secrets.REGION }}.myhuaweicloud.com/${{ env.ORG }}/frontend:${{ github.sha }} -n default
-          kubectl rollout status deployment/backend -n default
-          kubectl rollout status deployment/frontend -n default
+          kubectl rollout restart deployment/backend -n default
+          kubectl rollout restart deployment/frontend -n default
