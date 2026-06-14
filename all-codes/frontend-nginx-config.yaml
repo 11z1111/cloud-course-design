@@ -1,0 +1,28 @@
+apiVersion: v1
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+
+        location / {
+            root /usr/share/nginx/html;
+            index index.html;
+        }
+
+        location /api/ {
+            proxy_pass http://backend-svc:81;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+    }
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"default.conf":"server {\n    listen 80;\n    server_name localhost;\n\n    location / {\n        root /usr/share/nginx/html;\n        index index.html;\n    }\n\n    location /api/ {\n        proxy_pass http://backend-svc:80;\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n    }\n}\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"frontend-nginx-config","namespace":"default"}}
+  creationTimestamp: "2026-05-31T11:13:20Z"
+  name: frontend-nginx-config
+  namespace: default
+  resourceVersion: "38582"
+  uid: c42740aa-e11e-43aa-ac59-66e68a3cb686

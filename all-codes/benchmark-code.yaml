@@ -1,0 +1,25 @@
+apiVersion: v1
+data:
+  trapezoid_benchmark.py: "#!/usr/bin/env python3\n\"\"\"\n梯形法数值积分 - MPI 并行版（带计时）\n用于
+    B-2 性能测试\n\"\"\"\n\nfrom mpi4py import MPI\nimport time\n\ndef f(x):\n    return
+    x * x\n\ndef trapezoidal_serial(a, b, n):\n    h = (b - a) / n\n    integral =
+    (f(a) + f(b)) / 2.0\n    for i in range(1, n):\n        x = a + i * h\n        integral
+    += f(x)\n    integral *= h\n    return integral\n\nif __name__ == \"__main__\":\n
+    \   comm = MPI.COMM_WORLD\n    rank = comm.Get_rank()\n    size = comm.Get_size()\n
+    \   \n    # 固定问题规模：积分区间 [0,1]，总子区间数 10^7（1000万）\n    a, b = 0.0, 1.0\n    n_total
+    = 10000000  # 10^7 个点\n    \n    # 开始计时（只计时计算部分）\n    comm.Barrier()  # 同步所有进程\n
+    \   start_time = time.time()\n    \n    # 隐式 Scatter：分发子区间\n    h_global = (b
+    - a) / size\n    local_a = a + rank * h_global\n    local_b = local_a + h_global\n
+    \   \n    local_n = n_total // size\n    if rank == size - 1:\n        local_n
+    = n_total - (size - 1) * local_n\n    \n    # 局部计算\n    local_integral = trapezoidal_serial(local_a,
+    local_b, local_n)\n    \n    # Reduce 归约求和\n    total_integral = comm.reduce(local_integral,
+    op=MPI.SUM, root=0)\n    \n    comm.Barrier()  # 同步所有进程\n    end_time = time.time()\n
+    \   \n    if rank == 0:\n        elapsed = end_time - start_time\n        print(f\"{size}
+    {elapsed:.6f} {total_integral:.11f}\")\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2026-06-02T06:11:34Z"
+  name: benchmark-code
+  namespace: default
+  resourceVersion: "119408"
+  uid: 885b6ff4-e0a8-4d26-9a13-8d5250b54fe4

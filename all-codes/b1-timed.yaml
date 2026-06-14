@@ -1,0 +1,35 @@
+apiVersion: v1
+data:
+  b1_blocking_timed.py: "#!/usr/bin/env python3\n\"\"\"\n梯形法数值积分 - MPI 并行版（阻塞通信）\n基于
+    B-1 代码，添加计时功能\n问题规模：n_total = 1000000\n\"\"\"\n\nfrom mpi4py import MPI\nimport
+    time\n\ndef f(x):\n    return x * x\n\ndef trapezoidal_serial(a, b, n):\n    h
+    = (b - a) / n\n    integral = (f(a) + f(b)) / 2.0\n    for i in range(1, n):\n
+    \       x = a + i * h\n        integral += f(x)\n    integral *= h\n    return
+    integral\n\nif __name__ == \"__main__\":\n    # ============================================================\n
+    \   # MPI 通信原语1：MPI.COMM_WORLD - 获取全局通信域\n    # 数据流向：无数据传输，初始化 MPI 环境\n    # ============================================================\n
+    \   comm = MPI.COMM_WORLD\n    \n    # ============================================================\n
+    \   # MPI 通信原语2：comm.Get_rank() - 获取当前进程编号\n    # 数据流向：本地操作，无跨进程通信\n    # ============================================================\n
+    \   rank = comm.Get_rank()\n    \n    # ============================================================\n
+    \   # MPI 通信原语3：comm.Get_size() - 获取总进程数\n    # 数据流向：本地操作，无跨进程通信\n    # ============================================================\n
+    \   size = comm.Get_size()\n\n    a, b = 0.0, 1.0\n    n_total = 1000000\n\n    #
+    ============================================================\n    # MPI 通信原语4：Scatter（隐式）-
+    分发子区间\n    # 数据流向：每个进程根据 rank 自动计算自己的子区间\n    #   rank0: [0.00, 0.25), rank1:
+    [0.25, 0.50)\n    #   rank2: [0.50, 0.75), rank3: [0.75, 1.00]\n    # ============================================================\n
+    \   h_global = (b - a) / size\n    local_a = a + rank * h_global\n    local_b
+    = local_a + h_global\n\n    local_n = n_total // size\n    if rank == size - 1:\n
+    \       local_n = n_total - (size - 1) * local_n\n\n    # 局部计算（无通信）\n    local_integral
+    = trapezoidal_serial(local_a, local_b, local_n)\n\n    # ============================================================\n
+    \   # MPI 通信原语5：comm.reduce() - 阻塞归约求和\n    # 数据流向：所有进程的 local_integral 求和到 root
+    进程（rank0）\n    # ============================================================\n
+    \   comm.Barrier()\n    start_time = time.time()\n    total_integral = comm.reduce(local_integral,
+    op=MPI.SUM, root=0)\n    comm.Barrier()\n    end_time = time.time()\n    elapsed
+    = end_time - start_time\n\n    if rank == 0:\n        print(f\"阻塞版 ({size} 进程):
+    ∫({a}→{b}) x^2 dx = {total_integral:.11f}\")\n        print(f\"运行时间: {elapsed:.6f}
+    s\")\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2026-06-02T07:06:25Z"
+  name: b1-timed
+  namespace: default
+  resourceVersion: "143098"
+  uid: e3074f8a-4ed1-4d3b-9fe2-96e7439440c3

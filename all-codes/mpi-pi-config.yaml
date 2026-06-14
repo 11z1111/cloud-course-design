@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  discover_hosts.sh: |
+    #!/bin/sh
+  hostfile: |
+    mpi-pi-worker-0.mpi-pi.default.svc slots=2
+    mpi-pi-worker-1.mpi-pi.default.svc slots=2
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2026-06-01T06:48:47Z"
+  labels:
+    app: mpi-pi
+  name: mpi-pi-config
+  namespace: default
+  ownerReferences:
+  - apiVersion: kubeflow.org/v2beta1
+    blockOwnerDeletion: true
+    controller: true
+    kind: MPIJob
+    name: mpi-pi
+    uid: 679c465b-b1cb-4f53-9e33-1d9ece1e13a0
+  resourceVersion: "90825"
+  uid: e776db00-0cb7-40f8-9790-b21a0ad4504f

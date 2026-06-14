@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"kubernetes.io/elb.autocreate":"{\"type\":\"public\",\"bandwidth_name\":\"cce-bandwidth\",\"bandwidth_sharetype\":\"PER\",\"bandwidth_size\":5,\"eip_type\":\"5_bgp\"}","kubernetes.io/elb.class":"union"},"name":"backend-svc","namespace":"default"},"spec":{"ports":[{"port":80,"targetPort":5000}],"selector":{"app":"backend"},"type":"LoadBalancer"}}
+    kubernetes.io/elb.autocreate: '{"type":"public","bandwidth_name":"cce-bandwidth","bandwidth_sharetype":"PER","bandwidth_size":5,"eip_type":"5_bgp"}'
+    kubernetes.io/elb.class: union
+    kubernetes.io/elb.eip-id: 11a04409-472f-448b-a83b-b524a4dff01d
+    kubernetes.io/elb.id: 7de4a6e7-61a9-45b8-8d27-0e637e64f04c
+  creationTimestamp: "2026-05-31T10:50:08Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  name: backend-svc
+  namespace: default
+  resourceVersion: "24674"
+  uid: facdf9b4-e24b-4f37-93cc-babb96ac9fa1
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.247.202.5
+  clusterIPs:
+  - 10.247.202.5
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  loadBalancerIP: 121.36.199.160
+  ports:
+  - nodePort: 32505
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: backend
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 121.36.199.160
+      ipMode: VIP
+    - ip: 192.168.0.229
+      ipMode: VIP

@@ -1,0 +1,80 @@
+apiVersion: v1
+data:
+  b3_nonblocking.py: |
+    #!/usr/bin/env python3
+    """
+    梯形法数值积分 - MPI 并行版（非阻塞通信）
+    基于 B-1 代码，将阻塞 Reduce 改为非阻塞 Isend/Irecv
+    """
+
+    from mpi4py import MPI
+    import time
+
+    def f(x):
+        return x * x
+
+    def trapezoidal_serial(a, b, n):
+        h = (b - a) / n
+        integral = (f(a) + f(b)) / 2.0
+        for i in range(1, n):
+            x = a + i * h
+            integral += f(x)
+        integral *= h
+        return integral
+
+    if __name__ == "__main__":
+        # ============================================================
+        # MPI 通信原语1：MPI.COMM_WORLD - 获取全局通信域
+        # ============================================================
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        size = comm.Get_size()
+
+        a, b = 0.0, 1.0
+        n_total = 1000000
+
+        # ============================================================
+        # MPI 通信原语2：Scatter - 分发子区间
+        # ============================================================
+        h_global = (b - a) / size
+        local_a = a + rank * h_global
+        local_b = local_a + h_global
+
+        local_n = n_total // size
+        if rank == size - 1:
+            local_n = n_total - (size - 1) * local_n
+
+        local_integral = trapezoidal_serial(local_a, local_b, local_n)
+
+        # ============================================================
+        # 非阻塞通信：Isend / Irecv
+        # ============================================================
+        comm.Barrier()
+        start_time = time.time()
+
+        if rank == 0:
+            total_integral = local_integral
+            requests = []
+            for src in range(1, size):
+                req = comm.irecv(source=src, tag=0)
+                requests.append(req)
+            for req in requests:
+                total_integral += req.wait()
+        else:
+            req = comm.isend(local_integral, dest=0, tag=0)
+            req.wait()
+
+        comm.Barrier()
+        end_time = time.time()
+        elapsed = end_time - start_time
+
+        if rank == 0:
+            print(f"非阻塞版 ({size} 进程): ∫({a}→{b}) x^2 dx = {total_integral:.11f}")
+            print(f"运行时间: {elapsed:.6f} s")
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2026-06-02T07:08:36Z"
+  name: b3-code
+  namespace: default
+  resourceVersion: "144152"
+  uid: 7bdf8a18-0b9a-416e-977c-dbb90b066422

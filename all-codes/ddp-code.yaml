@@ -1,0 +1,42 @@
+apiVersion: v1
+data:
+  ddp_train.py: "import os\nimport torch\nimport torch.nn as nn\nimport torch.optim
+    as optim\nimport torch.distributed as dist\nimport time\nimport numpy as np\nimport
+    gzip\nfrom torch.nn.parallel import DistributedDataParallel as DDP\nfrom torch.utils.data.distributed
+    import DistributedSampler\nfrom torch.utils.data import TensorDataset, DataLoader\nfrom
+    torchvision import transforms\n\ndef load_mnist_images(filename):\n    with gzip.open(filename,
+    'rb') as f:\n        data = np.frombuffer(f.read(), np.uint8, offset=16)\n    return
+    data.reshape(-1, 28, 28).astype(np.float32) / 255.0\n\ndef load_mnist_labels(filename):\n
+    \   with gzip.open(filename, 'rb') as f:\n        data = np.frombuffer(f.read(),
+    np.uint8, offset=8)\n    return data.astype(np.int64)\n\nclass SimpleCNN(nn.Module):\n
+    \   def __init__(self):\n        super().__init__()\n        self.conv1 = nn.Conv2d(1,
+    32, 3, 1)\n        self.conv2 = nn.Conv2d(32, 64, 3, 1)\n        self.fc1 = nn.Linear(64*24*24,
+    128)\n        self.fc2 = nn.Linear(128, 10)\n\n    def forward(self, x):\n        x
+    = torch.relu(self.conv1(x))\n        x = torch.relu(self.conv2(x))\n        x
+    = torch.flatten(x, 1)\n        x = torch.relu(self.fc1(x))\n        return torch.log_softmax(self.fc2(x),
+    dim=1)\n\nif __name__ == \"__main__\":\n    rank = int(os.environ.get('RANK',
+    0))\n    world_size = int(os.environ.get('WORLD_SIZE', 2))\n    master_addr =
+    os.environ.get('MASTER_ADDR', 'localhost')\n    master_port = os.environ.get('MASTER_PORT',
+    '30001')\n    \n    print(f\"Worker {rank} 启动，master_addr={master_addr}, master_port={master_port}\")\n
+    \   \n    dist.init_process_group(backend=\"gloo\", init_method=f\"tcp://{master_addr}:{master_port}\",
+    rank=rank, world_size=world_size)\n    \n    if rank == 0:\n        print(f\"分布式训练启动，共
+    {world_size} 个 Worker\")\n\n    transform = transforms.Compose([\n        transforms.ToTensor(),\n
+    \       transforms.Normalize((0.1307,), (0.3081,))\n    ])\n\n    X = load_mnist_images('/data/train-images-idx3-ubyte.gz')\n
+    \   y = load_mnist_labels('/data/train-labels-idx1-ubyte.gz')\n    X = torch.stack([transform(img)
+    for img in X])\n    y = torch.tensor(y)\n\n    dataset = TensorDataset(X, y)\n
+    \   sampler = DistributedSampler(dataset, num_replicas=world_size, rank=rank)\n
+    \   loader = DataLoader(dataset, batch_size=64, sampler=sampler)\n\n    model
+    = DDP(SimpleCNN())\n    optimizer = optim.Adam(model.parameters(), lr=0.001)\n\n
+    \   if rank == 0:\n        start_time = time.time()\n\n    for epoch in range(1,
+    4):\n        sampler.set_epoch(epoch)\n        for data, target in loader:\n            optimizer.zero_grad()\n
+    \           loss = nn.functional.nll_loss(model(data), target)\n            loss.backward()\n
+    \           optimizer.step()\n        if rank == 0:\n            print(f\"Epoch
+    {epoch} 完成\")\n\n    if rank == 0:\n        print(f\"分布式训练 (2 个 Worker) 时间: {time.time()
+    - start_time:.2f} 秒\")\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2026-06-05T08:24:34Z"
+  name: ddp-code
+  namespace: default
+  resourceVersion: "517486"
+  uid: 5d91d0c3-c618-4573-b52a-6c44e6000a5e

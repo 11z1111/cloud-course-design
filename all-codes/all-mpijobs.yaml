@@ -1,0 +1,679 @@
+apiVersion: v1
+items:
+- apiVersion: kubeflow.org/v2beta1
+  kind: MPIJob
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kubeflow.org/v2beta1","kind":"MPIJob","metadata":{"annotations":{},"name":"b1-timed","namespace":"default"},"spec":{"mpiReplicaSpecs":{"Launcher":{"replicas":1,"template":{"spec":{"containers":[{"command":["mpirun","-n","4","python","/mnt/b1_blocking_timed.py"],"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"launcher","volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"b1-timed"},"name":"code"}]}}},"Worker":{"replicas":2,"template":{"spec":{"containers":[{"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"worker","resources":{"requests":{"cpu":"1","memory":"1Gi"}},"volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"b1-timed"},"name":"code"}]}}}},"runPolicy":{"cleanPodPolicy":"Running"},"slotsPerWorker":2}}
+    creationTimestamp: "2026-06-02T07:06:33Z"
+    generation: 1
+    name: b1-timed
+    namespace: default
+    resourceVersion: "143214"
+    uid: 40510641-0772-4f7c-9131-e5371b072e20
+  spec:
+    mpiImplementation: OpenMPI
+    mpiReplicaSpecs:
+      Launcher:
+        replicas: 1
+        template:
+          spec:
+            containers:
+            - command:
+              - mpirun
+              - -n
+              - "4"
+              - python
+              - /mnt/b1_blocking_timed.py
+              image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: launcher
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: b1-timed
+              name: code
+      Worker:
+        replicas: 2
+        template:
+          spec:
+            containers:
+            - image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: worker
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1Gi
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: b1-timed
+              name: code
+    runPolicy:
+      cleanPodPolicy: Running
+      suspend: false
+    slotsPerWorker: 2
+    sshAuthMountPath: /root/.ssh
+  status:
+    completionTime: "2026-06-02T07:06:37Z"
+    conditions:
+    - lastTransitionTime: "2026-06-02T07:06:33Z"
+      lastUpdateTime: "2026-06-02T07:06:33Z"
+      message: MPIJob default/b1-timed is created.
+      reason: MPIJobCreated
+      status: "True"
+      type: Created
+    - lastTransitionTime: "2026-06-02T07:06:37Z"
+      lastUpdateTime: "2026-06-02T07:06:37Z"
+      message: MPIJob default/b1-timed successfully completed.
+      reason: MPIJobSucceeded
+      status: "True"
+      type: Succeeded
+    replicaStatuses:
+      Launcher:
+        succeeded: 1
+      Worker: {}
+    startTime: "2026-06-02T07:06:33Z"
+- apiVersion: kubeflow.org/v2beta1
+  kind: MPIJob
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kubeflow.org/v2beta1","kind":"MPIJob","metadata":{"annotations":{},"name":"b3-test","namespace":"default"},"spec":{"mpiReplicaSpecs":{"Launcher":{"replicas":1,"template":{"spec":{"containers":[{"command":["mpirun","-n","4","python","/mnt/b3_nonblocking.py"],"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"launcher","volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"b3-code"},"name":"code"}]}}},"Worker":{"replicas":2,"template":{"spec":{"containers":[{"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"worker","resources":{"requests":{"cpu":"1","memory":"1Gi"}},"volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"b3-code"},"name":"code"}]}}}},"runPolicy":{"cleanPodPolicy":"Running"},"slotsPerWorker":2}}
+    creationTimestamp: "2026-06-02T07:08:43Z"
+    generation: 1
+    name: b3-test
+    namespace: default
+    resourceVersion: "144273"
+    uid: 4e41afb2-61ba-4bc9-a43a-19f5facf86f1
+  spec:
+    mpiImplementation: OpenMPI
+    mpiReplicaSpecs:
+      Launcher:
+        replicas: 1
+        template:
+          spec:
+            containers:
+            - command:
+              - mpirun
+              - -n
+              - "4"
+              - python
+              - /mnt/b3_nonblocking.py
+              image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: launcher
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: b3-code
+              name: code
+      Worker:
+        replicas: 2
+        template:
+          spec:
+            containers:
+            - image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: worker
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1Gi
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: b3-code
+              name: code
+    runPolicy:
+      cleanPodPolicy: Running
+      suspend: false
+    slotsPerWorker: 2
+    sshAuthMountPath: /root/.ssh
+  status:
+    completionTime: "2026-06-02T07:08:47Z"
+    conditions:
+    - lastTransitionTime: "2026-06-02T07:08:43Z"
+      lastUpdateTime: "2026-06-02T07:08:43Z"
+      message: MPIJob default/b3-test is created.
+      reason: MPIJobCreated
+      status: "True"
+      type: Created
+    - lastTransitionTime: "2026-06-02T07:08:47Z"
+      lastUpdateTime: "2026-06-02T07:08:47Z"
+      message: MPIJob default/b3-test successfully completed.
+      reason: MPIJobSucceeded
+      status: "True"
+      type: Succeeded
+    replicaStatuses:
+      Launcher:
+        succeeded: 1
+      Worker: {}
+    startTime: "2026-06-02T07:08:43Z"
+- apiVersion: kubeflow.org/v2beta1
+  kind: MPIJob
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kubeflow.org/v2beta1","kind":"MPIJob","metadata":{"annotations":{},"name":"bench-p1","namespace":"default"},"spec":{"mpiReplicaSpecs":{"Launcher":{"replicas":1,"template":{"spec":{"containers":[{"command":["mpirun","-n","1","python","/mnt/trapezoid_benchmark.py"],"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"launcher","volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"benchmark-code"},"name":"code"}]}}},"Worker":{"replicas":1,"template":{"spec":{"containers":[{"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"worker","resources":{"requests":{"cpu":"1","memory":"1Gi"}},"volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"benchmark-code"},"name":"code"}]}}}},"runPolicy":{"cleanPodPolicy":"Running"},"slotsPerWorker":1}}
+    creationTimestamp: "2026-06-02T06:11:51Z"
+    generation: 2
+    name: bench-p1
+    namespace: default
+    resourceVersion: "123502"
+    uid: 5eb42ae6-9caf-4cd1-9c9f-a7c353c57326
+  spec:
+    mpiImplementation: OpenMPI
+    mpiReplicaSpecs:
+      Launcher:
+        replicas: 1
+        template:
+          spec:
+            containers:
+            - command:
+              - mpirun
+              - -n
+              - "1"
+              - python
+              - /mnt/trapezoid_benchmark.py
+              image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: launcher
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: benchmark-code
+              name: code
+      Worker:
+        replicas: 1
+        template:
+          spec:
+            containers:
+            - image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: worker
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1Gi
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: benchmark-code
+              name: code
+    runPolicy:
+      cleanPodPolicy: Running
+      suspend: false
+    slotsPerWorker: 1
+    sshAuthMountPath: /root/.ssh
+  status:
+    completionTime: "2026-06-02T06:21:03Z"
+    conditions:
+    - lastTransitionTime: "2026-06-02T06:20:58Z"
+      lastUpdateTime: "2026-06-02T06:20:58Z"
+      message: MPIJob default/bench-p1 is created.
+      reason: MPIJobCreated
+      status: "True"
+      type: Created
+    - lastTransitionTime: "2026-06-02T06:21:03Z"
+      lastUpdateTime: "2026-06-02T06:21:03Z"
+      message: MPIJob default/bench-p1 successfully completed.
+      reason: MPIJobSucceeded
+      status: "True"
+      type: Succeeded
+    replicaStatuses:
+      Launcher:
+        succeeded: 1
+      Worker: {}
+    startTime: "2026-06-02T06:20:58Z"
+- apiVersion: kubeflow.org/v2beta1
+  kind: MPIJob
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kubeflow.org/v2beta1","kind":"MPIJob","metadata":{"annotations":{},"name":"bench-p2","namespace":"default"},"spec":{"mpiReplicaSpecs":{"Launcher":{"replicas":1,"template":{"spec":{"containers":[{"command":["mpirun","-n","2","python","/mnt/trapezoid_benchmark.py"],"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"launcher","volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"benchmark-code"},"name":"code"}]}}},"Worker":{"replicas":2,"template":{"spec":{"containers":[{"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"worker","resources":{"requests":{"cpu":"1","memory":"1Gi"}},"volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"benchmark-code"},"name":"code"}]}}}},"runPolicy":{"cleanPodPolicy":"Running"},"slotsPerWorker":2}}
+    creationTimestamp: "2026-06-02T06:36:34Z"
+    generation: 1
+    name: bench-p2
+    namespace: default
+    resourceVersion: "129073"
+    uid: 95ee1971-8915-4b2f-8d7f-8ece3eea4b5e
+  spec:
+    mpiImplementation: OpenMPI
+    mpiReplicaSpecs:
+      Launcher:
+        replicas: 1
+        template:
+          spec:
+            containers:
+            - command:
+              - mpirun
+              - -n
+              - "2"
+              - python
+              - /mnt/trapezoid_benchmark.py
+              image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: launcher
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: benchmark-code
+              name: code
+      Worker:
+        replicas: 2
+        template:
+          spec:
+            containers:
+            - image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: worker
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1Gi
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: benchmark-code
+              name: code
+    runPolicy:
+      cleanPodPolicy: Running
+      suspend: false
+    slotsPerWorker: 2
+    sshAuthMountPath: /root/.ssh
+  status:
+    completionTime: "2026-06-02T06:36:38Z"
+    conditions:
+    - lastTransitionTime: "2026-06-02T06:36:34Z"
+      lastUpdateTime: "2026-06-02T06:36:34Z"
+      message: MPIJob default/bench-p2 is created.
+      reason: MPIJobCreated
+      status: "True"
+      type: Created
+    - lastTransitionTime: "2026-06-02T06:36:38Z"
+      lastUpdateTime: "2026-06-02T06:36:38Z"
+      message: MPIJob default/bench-p2 successfully completed.
+      reason: MPIJobSucceeded
+      status: "True"
+      type: Succeeded
+    replicaStatuses:
+      Launcher:
+        succeeded: 1
+      Worker: {}
+    startTime: "2026-06-02T06:36:34Z"
+- apiVersion: kubeflow.org/v2beta1
+  kind: MPIJob
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kubeflow.org/v2beta1","kind":"MPIJob","metadata":{"annotations":{},"name":"bench-p4","namespace":"default"},"spec":{"mpiReplicaSpecs":{"Launcher":{"replicas":1,"template":{"spec":{"containers":[{"command":["mpirun","-n","4","python","/mnt/trapezoid_benchmark.py"],"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"launcher","volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"benchmark-code"},"name":"code"}]}}},"Worker":{"replicas":2,"template":{"spec":{"containers":[{"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"worker","resources":{"requests":{"cpu":"1","memory":"1Gi"}},"volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"benchmark-code"},"name":"code"}]}}}},"runPolicy":{"cleanPodPolicy":"Running"},"slotsPerWorker":2}}
+    creationTimestamp: "2026-06-02T06:44:36Z"
+    generation: 1
+    name: bench-p4
+    namespace: default
+    resourceVersion: "132967"
+    uid: 7fdad4b9-0ab9-400f-bc43-5c42cce0d996
+  spec:
+    mpiImplementation: OpenMPI
+    mpiReplicaSpecs:
+      Launcher:
+        replicas: 1
+        template:
+          spec:
+            containers:
+            - command:
+              - mpirun
+              - -n
+              - "4"
+              - python
+              - /mnt/trapezoid_benchmark.py
+              image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: launcher
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: benchmark-code
+              name: code
+      Worker:
+        replicas: 2
+        template:
+          spec:
+            containers:
+            - image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: worker
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1Gi
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: benchmark-code
+              name: code
+    runPolicy:
+      cleanPodPolicy: Running
+      suspend: false
+    slotsPerWorker: 2
+    sshAuthMountPath: /root/.ssh
+  status:
+    completionTime: "2026-06-02T06:44:41Z"
+    conditions:
+    - lastTransitionTime: "2026-06-02T06:44:36Z"
+      lastUpdateTime: "2026-06-02T06:44:36Z"
+      message: MPIJob default/bench-p4 is created.
+      reason: MPIJobCreated
+      status: "True"
+      type: Created
+    - lastTransitionTime: "2026-06-02T06:44:41Z"
+      lastUpdateTime: "2026-06-02T06:44:41Z"
+      message: MPIJob default/bench-p4 successfully completed.
+      reason: MPIJobSucceeded
+      status: "True"
+      type: Succeeded
+    replicaStatuses:
+      Launcher:
+        succeeded: 1
+      Worker: {}
+    startTime: "2026-06-02T06:44:36Z"
+- apiVersion: kubeflow.org/v2beta1
+  kind: MPIJob
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kubeflow.org/v2beta1","kind":"MPIJob","metadata":{"annotations":{},"name":"mpi-pi","namespace":"default"},"spec":{"mpiReplicaSpecs":{"Launcher":{"replicas":1,"template":{"spec":{"containers":[{"command":["mpirun","-n","4","python","/opt/mpi/pi_mpi.py"],"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"launcher"}]}}},"Worker":{"replicas":2,"template":{"spec":{"containers":[{"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"worker","resources":{"requests":{"cpu":"1","memory":"1Gi"}}}]}}}},"runPolicy":{"cleanPodPolicy":"Running"},"slotsPerWorker":2}}
+    creationTimestamp: "2026-06-01T06:48:47Z"
+    generation: 1
+    name: mpi-pi
+    namespace: default
+    resourceVersion: "90938"
+    uid: 679c465b-b1cb-4f53-9e33-1d9ece1e13a0
+  spec:
+    mpiImplementation: OpenMPI
+    mpiReplicaSpecs:
+      Launcher:
+        replicas: 1
+        template:
+          spec:
+            containers:
+            - command:
+              - mpirun
+              - -n
+              - "4"
+              - python
+              - /opt/mpi/pi_mpi.py
+              image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: launcher
+      Worker:
+        replicas: 2
+        template:
+          spec:
+            containers:
+            - image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: worker
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1Gi
+    runPolicy:
+      cleanPodPolicy: Running
+      suspend: false
+    slotsPerWorker: 2
+    sshAuthMountPath: /root/.ssh
+  status:
+    completionTime: "2026-06-01T06:48:58Z"
+    conditions:
+    - lastTransitionTime: "2026-06-01T06:48:47Z"
+      lastUpdateTime: "2026-06-01T06:48:47Z"
+      message: MPIJob default/mpi-pi is created.
+      reason: MPIJobCreated
+      status: "True"
+      type: Created
+    - lastTransitionTime: "2026-06-01T06:48:58Z"
+      lastUpdateTime: "2026-06-01T06:48:58Z"
+      message: MPIJob default/mpi-pi successfully completed.
+      reason: MPIJobSucceeded
+      status: "True"
+      type: Succeeded
+    replicaStatuses:
+      Launcher:
+        succeeded: 1
+      Worker: {}
+    startTime: "2026-06-01T06:48:47Z"
+- apiVersion: kubeflow.org/v2beta1
+  kind: MPIJob
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kubeflow.org/v2beta1","kind":"MPIJob","metadata":{"annotations":{},"name":"mpi-pi-new","namespace":"default"},"spec":{"mpiReplicaSpecs":{"Launcher":{"replicas":1,"template":{"spec":{"containers":[{"command":["mpirun","-n","4","python","/opt/mpi/pi_mpi.py"],"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"launcher"}]}}},"Worker":{"replicas":2,"template":{"spec":{"containers":[{"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"worker","resources":{"requests":{"cpu":"1","memory":"1Gi"}}}]}}}},"runPolicy":{"cleanPodPolicy":"Running"},"slotsPerWorker":2}}
+    creationTimestamp: "2026-06-01T07:24:55Z"
+    generation: 1
+    name: mpi-pi-new
+    namespace: default
+    resourceVersion: "107986"
+    uid: 58148b6d-50c4-4cf3-a7ec-50dfa39a501b
+  spec:
+    mpiImplementation: OpenMPI
+    mpiReplicaSpecs:
+      Launcher:
+        replicas: 1
+        template:
+          spec:
+            containers:
+            - command:
+              - mpirun
+              - -n
+              - "4"
+              - python
+              - /opt/mpi/pi_mpi.py
+              image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: launcher
+      Worker:
+        replicas: 2
+        template:
+          spec:
+            containers:
+            - image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: worker
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1Gi
+    runPolicy:
+      cleanPodPolicy: Running
+      suspend: false
+    slotsPerWorker: 2
+    sshAuthMountPath: /root/.ssh
+  status:
+    completionTime: "2026-06-01T07:25:06Z"
+    conditions:
+    - lastTransitionTime: "2026-06-01T07:24:55Z"
+      lastUpdateTime: "2026-06-01T07:24:55Z"
+      message: MPIJob default/mpi-pi-new is created.
+      reason: MPIJobCreated
+      status: "True"
+      type: Created
+    - lastTransitionTime: "2026-06-01T07:25:06Z"
+      lastUpdateTime: "2026-06-01T07:25:06Z"
+      message: MPIJob default/mpi-pi-new successfully completed.
+      reason: MPIJobSucceeded
+      status: "True"
+      type: Succeeded
+    replicaStatuses:
+      Launcher:
+        succeeded: 1
+      Worker: {}
+    startTime: "2026-06-01T07:24:55Z"
+- apiVersion: kubeflow.org/v2beta1
+  kind: MPIJob
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kubeflow.org/v2beta1","kind":"MPIJob","metadata":{"annotations":{},"name":"trapezoid-mycode","namespace":"default"},"spec":{"mpiReplicaSpecs":{"Launcher":{"replicas":1,"template":{"spec":{"containers":[{"command":["mpirun","-n","4","python","/mnt/trapezoid_mpi_full_comment.py"],"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"launcher","volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"trapezoid-code"},"name":"code"}]}}},"Worker":{"replicas":2,"template":{"spec":{"containers":[{"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"worker","resources":{"requests":{"cpu":"1","memory":"1Gi"}},"volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"trapezoid-code"},"name":"code"}]}}}},"runPolicy":{"cleanPodPolicy":"Running"},"slotsPerWorker":2}}
+    creationTimestamp: "2026-06-01T07:41:26Z"
+    generation: 1
+    name: trapezoid-mycode
+    namespace: default
+    resourceVersion: "115803"
+    uid: 2a49d3fb-1057-4575-909a-7921c3dcb690
+  spec:
+    mpiImplementation: OpenMPI
+    mpiReplicaSpecs:
+      Launcher:
+        replicas: 1
+        template:
+          spec:
+            containers:
+            - command:
+              - mpirun
+              - -n
+              - "4"
+              - python
+              - /mnt/trapezoid_mpi_full_comment.py
+              image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: launcher
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: trapezoid-code
+              name: code
+      Worker:
+        replicas: 2
+        template:
+          spec:
+            containers:
+            - image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: worker
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1Gi
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: trapezoid-code
+              name: code
+    runPolicy:
+      cleanPodPolicy: Running
+      suspend: false
+    slotsPerWorker: 2
+    sshAuthMountPath: /root/.ssh
+  status:
+    completionTime: "2026-06-01T07:41:30Z"
+    conditions:
+    - lastTransitionTime: "2026-06-01T07:41:26Z"
+      lastUpdateTime: "2026-06-01T07:41:26Z"
+      message: MPIJob default/trapezoid-mycode is created.
+      reason: MPIJobCreated
+      status: "True"
+      type: Created
+    - lastTransitionTime: "2026-06-01T07:41:30Z"
+      lastUpdateTime: "2026-06-01T07:41:30Z"
+      message: MPIJob default/trapezoid-mycode successfully completed.
+      reason: MPIJobSucceeded
+      status: "True"
+      type: Succeeded
+    replicaStatuses:
+      Launcher:
+        succeeded: 1
+      Worker: {}
+    startTime: "2026-06-01T07:41:26Z"
+- apiVersion: kubeflow.org/v2beta1
+  kind: MPIJob
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"kubeflow.org/v2beta1","kind":"MPIJob","metadata":{"annotations":{},"name":"trapezoid-test","namespace":"default"},"spec":{"mpiReplicaSpecs":{"Launcher":{"replicas":1,"template":{"spec":{"containers":[{"command":["mpirun","-n","4","python","/mnt/trapezoid_mpi_fixed.py"],"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"launcher","volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"trapezoid-code"},"name":"code"}]}}},"Worker":{"replicas":2,"template":{"spec":{"containers":[{"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest","name":"worker","resources":{"requests":{"cpu":"1","memory":"1Gi"}},"volumeMounts":[{"mountPath":"/mnt","name":"code"}]}],"volumes":[{"configMap":{"name":"trapezoid-code"},"name":"code"}]}}}},"runPolicy":{"cleanPodPolicy":"Running"},"slotsPerWorker":2}}
+    creationTimestamp: "2026-06-01T07:11:56Z"
+    generation: 1
+    name: trapezoid-test
+    namespace: default
+    resourceVersion: "101768"
+    uid: d409fc78-d200-4446-87fa-32a15b5f7140
+  spec:
+    mpiImplementation: OpenMPI
+    mpiReplicaSpecs:
+      Launcher:
+        replicas: 1
+        template:
+          spec:
+            containers:
+            - command:
+              - mpirun
+              - -n
+              - "4"
+              - python
+              - /mnt/trapezoid_mpi_fixed.py
+              image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: launcher
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: trapezoid-code
+              name: code
+      Worker:
+        replicas: 2
+        template:
+          spec:
+            containers:
+            - image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/mpi4py:latest
+              name: worker
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1Gi
+              volumeMounts:
+              - mountPath: /mnt
+                name: code
+            volumes:
+            - configMap:
+                name: trapezoid-code
+              name: code
+    runPolicy:
+      cleanPodPolicy: Running
+      suspend: false
+    slotsPerWorker: 2
+    sshAuthMountPath: /root/.ssh
+  status:
+    completionTime: "2026-06-01T07:12:00Z"
+    conditions:
+    - lastTransitionTime: "2026-06-01T07:11:56Z"
+      lastUpdateTime: "2026-06-01T07:11:56Z"
+      message: MPIJob default/trapezoid-test is created.
+      reason: MPIJobCreated
+      status: "True"
+      type: Created
+    - lastTransitionTime: "2026-06-01T07:12:00Z"
+      lastUpdateTime: "2026-06-01T07:12:00Z"
+      message: MPIJob default/trapezoid-test successfully completed.
+      reason: MPIJobSucceeded
+      status: "True"
+      type: Succeeded
+    replicaStatuses:
+      Launcher:
+        succeeded: 1
+      Worker: {}
+    startTime: "2026-06-01T07:11:56Z"
+kind: List
+metadata:
+  resourceVersion: ""

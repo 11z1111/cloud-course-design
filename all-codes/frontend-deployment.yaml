@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "6"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"frontend","namespace":"default"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"frontend"}},"template":{"metadata":{"labels":{"app":"frontend"}},"spec":{"containers":[{"image":"swr.cn-east-3.myhuaweicloud.com/cce-course2004/frontend:v1","name":"frontend","ports":[{"containerPort":80}],"volumeMounts":[{"mountPath":"/etc/nginx/conf.d/default.conf","name":"nginx-config","subPath":"default.conf"}]}],"volumes":[{"configMap":{"name":"frontend-nginx-config"},"name":"nginx-config"}]}}}}
+  creationTimestamp: "2026-05-31T11:14:04Z"
+  generation: 6
+  name: frontend
+  namespace: default
+  resourceVersion: "525395"
+  uid: 81568269-1f9f-4f70-b9af-7a155ffb1d16
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-06-03T12:28:53Z"
+      creationTimestamp: null
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - image: swr.cn-east-3.myhuaweicloud.com/cce-course2004/frontend:2234e6e8d675e8e5255f11b008245dbde43d3f56
+        imagePullPolicy: IfNotPresent
+        name: frontend
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d/default.conf
+          name: nginx-config
+          subPath: default.conf
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: swr-secret
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: frontend-nginx-config
+        name: nginx-config
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2026-06-03T12:28:53Z"
+    lastUpdateTime: "2026-06-03T12:34:50Z"
+    message: ReplicaSet "frontend-786b8cfbd9" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2026-06-06T12:49:38Z"
+    lastUpdateTime: "2026-06-06T12:49:38Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 6
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

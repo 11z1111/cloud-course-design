@@ -1,0 +1,9 @@
+FROM python:3.10-slim
+
+# 安装 PyTorch（CPU 版本）
+RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+
+# 安装其他依赖
+RUN pip install matplotlib
+
+WORKDIR /app
